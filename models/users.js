@@ -3,11 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../config');
 
-// const Joi = require('joi');
-
-// const validator = Joi.object({
-//   password: Joi.string().min(6)
-// });
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -33,6 +28,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function(next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  console.log('pwd updated');
   next();
 })
 
@@ -41,9 +37,6 @@ const User = mongoose.model('User', userSchema);
 module.exports = {
   Model: User,
   async registerUser(data) {
-    // const { error } = validator.validate(data);
-    // error.isUserError = true;
-    // if (error) throw error;
    return await User.create(data);
   },
   async encryptPassword(password) {},

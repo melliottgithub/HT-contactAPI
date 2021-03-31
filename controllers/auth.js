@@ -1,16 +1,30 @@
 const { users } = require('../models');
-const { auth } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { secret, db } = require('../config');
+const auth = require('../middleware');
 
 module.exports = {
   async get(req, res, next) {
-    let user = await db.findOne();
+    try {
+      const user = await users.Model.findById(req.user.id).select('-password');
+      res.json(user);
+    } catch (err) {
+      console.log('err', err);
+      res.status(500).json({ status: 'Server Error' });
+    }
+  },
+  async post(req, res, next) {
     const { email, password } = req.body;
+    console.log({ email, password });
+    let user = await users.Model.findOne({ email });
     try {
       if (!user) {
-        return res.status(400).json({ status: 'Invalid Credentials' });
+        res.status(400).json({ msg: 'Invalid Credentials' });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        res.status(400).json({ msg: 'Invalid Credentials' });
       }
       const { id } = user;
       const payload = {
@@ -18,34 +32,20 @@ module.exports = {
           id,
         },
       };
-      jwt.sign(
-        payload,
-        secret.key,
-        { expiresIn: 36000 },
-        (err, token) => {
-          if (err) {
-            throw err;
-          }
-          res.json({ token });
+      jwt.sign(payload, secret.key, { expiresIn: 36000 }, (err, token) => {
+        if (err) {
+          throw err;
         }
-      );
-      const data = await auth.authUser(req.body);
-      res.status(201).json({ status: 'Logged in user' });
+        return res.json({ token });
+      });
+      // res.status(200).json({ status: 'Updated contact' });
     } catch (err) {
-      res.status(500).json({ error: err });
-    }
-  },
-  async post(req, res, next) {
-    try {
-      const data = await auth.finOneAndUpdate(req.id);
-      res.status(200).json({ status: 'Updated contact' });
-    } catch (err) {
-      res.status(500).json({ error: err });
+      res.status(400).json({ error: err });
     }
   },
   async delete(req, res, next) {
     try {
-      const data = await auth.delete();
+      const data = await users.delete();
     } catch (err) {
       res.status(500).json({ error: err });
     }

@@ -12,7 +12,6 @@ module.exports = {
       if (user) {
         res.json({ message: 'User already exists' });
       }
-      // user = new User({ name, email, password });
       user = await users.registerUser({ name, email, password });
 
       const { id } = user;
@@ -28,11 +27,9 @@ module.exports = {
         return res.json({ token });
       });
 
-      // user = await user.save();
-      // return users.getDetails(user);
+
     } catch (err) {
       if (err.name == 'MongoError' && err.code === 11000) {
-        // duplicated key
         if ('email' in err.keyPattern) {
           throw new Error('Email address is already registered');
         } else {

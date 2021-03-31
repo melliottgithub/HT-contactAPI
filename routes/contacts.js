@@ -1,10 +1,14 @@
 const controller = require('../controllers');
 const router = require('express').Router();
+const auth = require('../middleware');
 
-router.route('/contacts').post(controller.contacts.post);
-// router
-//   .route('/contacts/:id')
-//   .put(controller.contacts.put)
-//   .delete(controller.contacts.delete);
+router
+  .route('/')
+  .post(auth, controller.contacts.post)
+  .get(auth, controller.contacts.get)
+  .put(auth, controller.contacts.put);
+
+  router
+  .route('/:id').delete(controller.contacts.delete);
 
 module.exports = router;
