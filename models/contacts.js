@@ -29,8 +29,8 @@ const contactSchema = new mongoose.Schema({
     default: 'FullStack',
   },
   date: {
-    type: String,
-    default: Date.now(),
+    type: Date,
+    default: Date.now,
   },
 });
 
@@ -41,6 +41,7 @@ module.exports = {
   async createNewContact(data) {
     try {
       const contact = await Contact.create(data);
+      return contact;
     } catch (err) {
       console.log('Cannot create ', data, err);
       throw err;
@@ -48,7 +49,6 @@ module.exports = {
   },
   async getContactsByUser({ userId }) {
     try {
-      console.log(ObjectId(userId));
       const contacts = await Contact.find({ userId: ObjectId(userId) }).sort({
         date: -1,
       });
@@ -61,8 +61,7 @@ module.exports = {
   },
   async updateById(contact) {
     try {
-      const updated = await Contact.findByIdAndUpdate(contact.id, contact);
-      console.log('updated', updated);
+      const updated = await Contact.findOneAndUpdate(contact._id, contact, { new: true });
       return updated;
     } catch (err) {
       // ??

@@ -10,13 +10,11 @@ module.exports = {
       const user = await users.Model.findById(req.user.id).select('-password');
       res.json(user);
     } catch (err) {
-      console.log('err', err);
       res.status(500).json({ status: 'Server Error' });
     }
   },
   async post(req, res, next) {
     const { email, password } = req.body;
-    console.log({ email, password });
     let user = await users.Model.findOne({ email });
     try {
       if (!user) {

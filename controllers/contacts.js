@@ -5,10 +5,9 @@ module.exports = {
   async post(req, res, next) {
     try {
       const data = { ...req.body, userId: req.user.id };
-      await contacts.createNewContact(data);
-      res.status(201).json({ status: 'New contact created' });
+      const contact = await contacts.createNewContact(data);
+      res.status(201).json(contact);
     } catch (err) {
-      console.log(err);
       res.status(500).json({ error: err });
     }
   },
@@ -24,7 +23,7 @@ module.exports = {
     const body = req.body;
     try {
       const data = await contacts.updateById(body);
-      res.status(200).json({ status: 'Updated contact' });
+      res.status(200).json(data);
     } catch (err) {
       res.status(500).json({ error: err });
     }
@@ -33,7 +32,7 @@ module.exports = {
     try {
       const success = await contacts.deleteById(req.params.id);
       if (success) {
-        res.status(200).json({ status: 'Deleteds contact' });
+        res.status(200).json({ status: 'Deleted contact' });
       } else {
         res.status(402).json({ error: 'Not found' });
       }

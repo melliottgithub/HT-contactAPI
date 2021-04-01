@@ -36,7 +36,6 @@ module.exports = {
           throw new Error('Duplicated key');
         }
       }
-      console.log(err);
       throw err;
     }
   },
