@@ -18,11 +18,11 @@ module.exports = {
     let user = await users.Model.findOne({ email });
     try {
       if (!user) {
-        res.status(400).json({ msg: 'Invalid Credentials' });
+        return res.status(400).json({ msg: 'Invalid Credentials' });
       }
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        res.status(400).json({ msg: 'Invalid Credentials' });
+        return res.status(400).json({ msg: 'Invalid Credentials' });
       }
       const { id } = user;
       const payload = {
@@ -30,7 +30,7 @@ module.exports = {
           id,
         },
       };
-      jwt.sign(payload, secret.key, { expiresIn: 36000 }, (err, token) => {
+      jwt.sign(payload, secret.key, { expiresIn: 360000 }, (err, token) => {
         if (err) {
           throw err;
         }

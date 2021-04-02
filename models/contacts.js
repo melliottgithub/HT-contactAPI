@@ -61,7 +61,7 @@ module.exports = {
   },
   async updateById(contact) {
     try {
-      const updated = await Contact.findOneAndUpdate(contact._id, contact, { new: true });
+      const updated = await Contact.findOneAndUpdate({_id: contact._id}, contact, { new: true });
       return updated;
     } catch (err) {
       // ??
