@@ -12,23 +12,28 @@ module.exports = {
       if (user) {
         res.json({ message: 'User already exists' });
       }
+      console.log('users post ', req.body);
       user = await users.registerUser({ name, email, password });
-
+      console.log('user', user);
       const { id } = user;
       const payload = {
         user: {
           id,
         },
       };
+      console.log('payload', payload);
       jwt.sign(payload, secret.key, { expiresIn: 360000 }, (err, token) => {
         if (err) {
+          console.log(err);
           throw err;
         }
-        return res.json({ token });
+        console.log('token', token)
+        return res.status(200).json({ token });
       });
 
 
     } catch (err) {
+
       if (err.name == 'MongoError' && err.code === 11000) {
         if ('email' in err.keyPattern) {
           throw new Error('Email address is already registered');
