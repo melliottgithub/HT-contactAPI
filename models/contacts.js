@@ -28,6 +28,7 @@ const contactSchema = new mongoose.Schema({
     type: String,
     default: 'FullStack',
   },
+  company : String,
   date: {
     type: Date,
     default: Date.now,
